@@ -1,30 +1,80 @@
 # Drowsy Driver Detection System
 
-This project is a real-time drowsiness detection system using computer vision and hardware feedback (buzzer and servo). It uses facial landmark analysis to monitor eye activity and detect when a person is drowsy or asleep, triggering visual and hardware alerts.
+A real-time driver drowsiness detection system using computer vision and Arduino-based hardware alerts. This system monitors eye movements through facial landmarks and gives real-time feedback based on user alertness.
 
 ## Features
 
-- Detects driver's eye status (Active, Drowsy, Sleeping)
-- Uses dlib's 68-point facial landmark detection
-- Provides visual feedback on screen
-- Sends signals to Arduino to:
-  - Play buzzer tones
-  - Control a servo motor (can be used to trigger further actions like seat vibrations)
-
----
+- Detects user state: Active, Drowsy, or Sleeping
+- Uses eye aspect ratio (EAR) from facial landmarks
+- Sends real-time signals to Arduino for hardware alerts:
+  - Servo motor movement
+  - Buzzer activation
+- Visual feedback via OpenCV overlay
 
 ## Tech Stack
 
-- **Python (OpenCV, Dlib, Imutils, cvzone)**
-- **Arduino (Servo, Buzzer control)**
-- **Hardware:** Arduino Uno, Servo Motor, Buzzer
+**Python**
+- OpenCV
+- Dlib
+- Imutils
+- NumPy
+- cvzone
+- Playsound
 
----
+**Arduino**
+- Servo library
+- Tone (buzzer)
+
+## File Structure
+
+```
+.
+├── drowsiness_detector.py
+├── arduino_hardware.ino
+├── shape_predictor_68_face_landmarks.dat  # Not included, download separately
+└── README.md
+```
 
 ## Setup Instructions
 
-### 1. Python Environment
+### Python
 
-#### Install Dependencies:
-```bash
-pip install opencv-python dlib imutils numpy cvzone playsound
+1. Install dependencies:
+   ```bash
+   pip install opencv-python dlib imutils numpy cvzone playsound
+   ```
+
+2. Download the facial landmarks model:
+
+   https://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+
+   Extract and place `shape_predictor_68_face_landmarks.dat` in the project directory.
+
+3. Update video path in `drowsiness_detector.py`:
+   ```python
+   cap = cv2.VideoCapture(r"PATH_TO_YOUR_VIDEO.mp4")
+   ```
+
+4. Run:
+   ```bash
+   python drowsiness_detector.py
+   ```
+
+### Arduino
+
+1. Connect:
+   - Servo → Digital Pin 8
+   - Buzzer → Digital Pin 9
+
+2. Open `arduino.ino` in Arduino IDE.
+
+3. Upload to board.
+
+## Serial Protocol
+
+| State     | Signal | Servo | Buzzer |
+|-----------|--------|--------|--------|
+| Active    | `'0'`  | 0°     | Off    |
+| Drowsy    | `'2'`  | 45°    | On     |
+| Sleeping  | `'1'`  | 90°    | On     |
+
